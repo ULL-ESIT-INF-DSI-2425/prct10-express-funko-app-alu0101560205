@@ -4,7 +4,7 @@ import path from 'path';
 
 const basePath = './data';
 
-export const saveFunko = (user: string, funko: Funko) => {
+export const saveFunko = (user: string, funko: Funko): Promise<void> => {
   const userDir = path.join(basePath, user);
   const filePath = path.join(userDir, `${funko.id}.json`);
 
@@ -18,7 +18,7 @@ export const saveFunko = (user: string, funko: Funko) => {
     });
 };
 
-export const updateFunko = (user: string, funko: Funko) => {
+export const updateFunko = (user: string, funko: Funko): Promise<void> => {
   const filePath = path.join(basePath, user, `${funko.id}.json`);
 
   return fs.pathExists(filePath)
@@ -30,7 +30,7 @@ export const updateFunko = (user: string, funko: Funko) => {
     });
 };
 
-export const deleteFunko = (user: string, id: number) => {
+export const deleteFunko = (user: string, id: number): Promise<void> => {
   const filePath = path.join(basePath, user, `${id}.json`);
 
   return fs.pathExists(filePath)
@@ -47,11 +47,12 @@ export const listFunkos = (user: string): Promise<Funko[]> => {
 
   return fs.pathExists(userDir)
     .then((exists) => {
-      if (!exists) return [];
+      if (!exists) {
+        return [];
+      }
       return fs.readdir(userDir);
     })
     .then((files) => {
-      if (!Array.isArray(files)) return [];
       const funkoPromises = files.map(file => fs.readJson(path.join(userDir, file)));
       return Promise.all(funkoPromises);
     });
