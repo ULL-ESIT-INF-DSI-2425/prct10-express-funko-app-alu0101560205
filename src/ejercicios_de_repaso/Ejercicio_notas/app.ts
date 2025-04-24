@@ -1,5 +1,5 @@
 import express from "express";
-import { readNote } from "./notes.js";
+import { readNote } from "./notes-promises.js";
 
 const app = express();
 
