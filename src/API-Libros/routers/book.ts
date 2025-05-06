@@ -111,3 +111,33 @@ bookRouter.patch("/books/:username/:id", async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+bookRouter.delete("/books/:username/:id", async (req, res) => {
+  try {
+    const user = await User.findOne({
+      username: req.params.username,
+    });
+
+    if (!user) {
+      res.status(404).send({
+        error: "User not found",
+      });
+    } else {
+      const book = await Book.findOneAndDelete({
+        owner: user._id,
+        _id: req.params.id,
+      }).populate({
+        path: "owner",
+        select: ["username"],
+      });
+
+      if (book) {
+        res.send(book);
+      } else {
+        res.status(404).send();
+      }
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
